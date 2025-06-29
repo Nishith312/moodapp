@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "129612659281",
+    "project_id": "mood-calender312",
+    "storage_bucket": "mood-calender312.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:129612659281:android:59980e0b0ce599013c5670",
+        "android_client_info": {
+          "package_name": "com.example.mood_demo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIUo6EB3rjj5yuDJZnG71HGlI4fKCxQBI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
