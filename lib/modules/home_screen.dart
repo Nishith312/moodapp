@@ -18,18 +18,6 @@ class MoodTrackerHome extends StatelessWidget {
       appBar: AppBar(
         title: Text('Mood Tracker'),
         actions: [
-          Obx(() {
-            final authController = Get.find<AuthController>();
-            return Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Center(
-                child: Text(
-                  'UID: ${authController.user?.uid.substring(0, 6) ?? 'None'}...',
-                  style: TextStyle(fontSize: 10),
-                ),
-              ),
-            );
-          }),
           IconButton(
             icon: Icon(Icons.logout),
             onPressed: () {
