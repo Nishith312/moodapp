@@ -37,18 +37,21 @@ class MoodController extends GetxController {
     super.onInit();
   }
 
+  /// Get reference to user's moods subcollection
+  CollectionReference _getMoodsCollection(String userId) {
+    return _firestore.collection('data').doc(userId).collection('moods');
+  }
+
   Future<void> loadMoods(String userId) async {
     try {
       _isLoading.value = true;
 
-      final querySnapshot = await _firestore
-          .collection('moods')
-          .where('userId', isEqualTo: userId)
-          .orderBy('date', descending: true)
-          .get();
+      final querySnapshot = await _getMoodsCollection(
+        userId,
+      ).orderBy('date', descending: true).get();
 
       _moods.value = querySnapshot.docs
-          .map((doc) => Mood.fromMap(doc.data(), doc.id))
+          .map((doc) => Mood.fromMap(doc.data() as Map<String, dynamic>, doc.id))
           .toList();
 
       _moodsByDate.clear();
@@ -90,19 +93,17 @@ class MoodController extends GetxController {
 
       if (existingMood != null) {
         // Update existing mood
-        await _firestore.collection('moods').doc(existingMood.id).update({
-          'rating': rating,
-          'emoji': emoji,
-          'note': note,
-        });
+        await _getMoodsCollection(
+          userId,
+        ).doc(existingMood.id).update({'rating': rating, 'emoji': emoji, 'note': note});
       } else {
         // Create new mood
-        await _firestore.collection('moods').add({
+        await _getMoodsCollection(userId).add({
           'date': Timestamp.fromDate(dateKey),
           'rating': rating,
           'emoji': emoji,
           'note': note,
-          'userId': userId,
+          'userId': userId, // Keep userId in the document for consistency
         });
       }
 
@@ -140,6 +141,51 @@ class MoodController extends GetxController {
     }
   }
 
+  /// Delete a specific mood
+  Future<bool> deleteMood(String moodId, String userId) async {
+    try {
+      _isLoading.value = true;
+
+      await _getMoodsCollection(userId).doc(moodId).delete();
+      await loadMoods(userId);
+
+      Get.snackbar(
+        'Success',
+        'Mood deleted successfully!',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+
+      return true;
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Failed to delete mood: ${e.toString()}',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      return false;
+    } finally {
+      _isLoading.value = false;
+    }
+  }
+
+  /// Get mood for a specific date
+  Mood? getMoodForDate(DateTime date) {
+    final dateKey = DateTime(date.year, date.month, date.day);
+    return _moodsByDate[dateKey];
+  }
+
+  /// Get moods for a date range
+  List<Mood> getMoodsInRange(DateTime startDate, DateTime endDate) {
+    return _moods.where((mood) {
+      return mood.date.isAfter(startDate.subtract(Duration(days: 1))) &&
+          mood.date.isBefore(endDate.add(Duration(days: 1)));
+    }).toList();
+  }
+
   double getWeeklyAverage(DateTime weekStart) {
     final weekEnd = weekStart.add(Duration(days: 7));
     final weekMoods = _moods.where((mood) {
@@ -151,6 +197,19 @@ class MoodController extends GetxController {
 
     final sum = weekMoods.fold(0, (prev, mood) => prev + mood.rating);
     return sum / weekMoods.length;
+  }
+
+  /// Get monthly average
+  double getMonthlyAverage(DateTime month) {
+    final monthStart = DateTime(month.year, month.month, 1);
+    final monthEnd = DateTime(month.year, month.month + 1, 1).subtract(Duration(days: 1));
+
+    final monthMoods = getMoodsInRange(monthStart, monthEnd);
+
+    if (monthMoods.isEmpty) return 0.0;
+
+    final sum = monthMoods.fold(0, (prev, mood) => prev + mood.rating);
+    return sum / monthMoods.length;
   }
 
   Color getMoodColor(int rating) {

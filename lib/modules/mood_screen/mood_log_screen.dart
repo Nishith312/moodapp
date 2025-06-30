@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mood_demo/controller/auth_controller.dart';
-import 'package:mood_demo/modules/mood_screen/mood_controller.dart';
+import 'package:mood_demo/controller/mood_controller.dart';
 
 class MoodLogScreen extends StatefulWidget {
   @override

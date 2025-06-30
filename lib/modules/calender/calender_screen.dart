@@ -3,7 +3,7 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:mood_demo/controller/auth_controller.dart';
 import 'package:mood_demo/model/moods.dart';
-import 'package:mood_demo/modules/mood_screen/mood_controller.dart';
+import 'package:mood_demo/controller/mood_controller.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CalendarScreen extends StatefulWidget {
