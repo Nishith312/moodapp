@@ -20,11 +20,11 @@ class MoodController extends GetxController {
 
   static const List<String> moodEmojis = ['😢', '😟', '😐', '🙂', '😄'];
   static const List<Color> moodColors = [
-    Color(0xFFE57373), // Red - Very sad
-    Color(0xFFFFB74D), // Orange - Sad
-    Color(0xFFFFD54F), // Yellow - Neutral
-    Color(0xFF81C784), // Light Green - Happy
-    Color(0xFF66BB6A), // Green - Very happy
+    Color(0xFFE57373),
+    Color(0xFFFFB74D),
+    Color(0xFFFFD54F),
+    Color(0xFF81C784),
+    Color(0xFF66BB6A),
   ];
 
   @override
@@ -103,7 +103,7 @@ class MoodController extends GetxController {
           'rating': rating,
           'emoji': emoji,
           'note': note,
-          'userId': userId, // Keep userId in the document for consistency
+          'userId': userId,
         });
       }
 

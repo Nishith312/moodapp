@@ -6,11 +6,27 @@ import 'package:mood_demo/modules/calender/calender_screen.dart';
 import 'package:mood_demo/modules/mood_screen/mood_log_screen.dart';
 import 'package:mood_demo/modules/trends/trends.dart';
 
-class MoodTrackerHome extends StatelessWidget {
+class MoodTrackerHome extends StatefulWidget {
+  const MoodTrackerHome({super.key});
+
+  @override
+  State<MoodTrackerHome> createState() => _MoodTrackerHomeState();
+}
+
+class _MoodTrackerHomeState extends State<MoodTrackerHome> {
   final List<Widget> _pages = [MoodLogScreen(), CalendarScreen(), TrendsScreen()];
+
   final controller = Get.find<MoodController>();
 
-  MoodTrackerHome({super.key});
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (Get.find<AuthController>().user != null) {
+        controller.loadMoods(Get.find<AuthController>().user!.uid);
+      }
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
